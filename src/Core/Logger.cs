@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>极简文本日志：写到 exe 同目录 logs\yyyy-MM-dd.log。</summary>
 internal sealed class Logger

@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using AudioGroup.Models;
+using AudioPilot.Models;
 
-namespace AudioGroup.UI;
+namespace AudioPilot.UI;
 
 /// <summary>
 /// 切换后的反馈：无焦点 OSD + 提示音。

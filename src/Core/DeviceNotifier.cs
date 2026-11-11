@@ -1,6 +1,6 @@
-using AudioGroup.Interop;
+using AudioPilot.Interop;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// IMMNotificationClient 的托管实现。COM 回调可能来自非 UI 线程，

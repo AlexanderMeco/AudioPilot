@@ -1,9 +1,9 @@
 using System.Drawing;
 using System.Windows.Forms;
-using AudioGroup.Core;
-using AudioGroup.Models;
+using AudioPilot.Core;
+using AudioPilot.Models;
 
-namespace AudioGroup.UI;
+namespace AudioPilot.UI;
 
 /// <summary>
 /// 系统托盘宿主。程序没有主窗口，ApplicationContext 一直运行到用户点「退出」。
@@ -27,7 +27,7 @@ internal sealed class TrayApp : ApplicationContext
         try
         {
             using var stream = typeof(TrayApp).Assembly
-                .GetManifestResourceStream("AudioGroup.Assets.app.ico");
+                .GetManifestResourceStream("AudioPilot.Assets.app.ico");
             if (stream is not null) return new Icon(stream);
         }
         catch (Exception ex)
@@ -49,7 +49,7 @@ internal sealed class TrayApp : ApplicationContext
         _icon = new NotifyIcon
         {
             Icon = _appIcon,
-            Text = "AudioGroup · 音频分组切换",
+            Text = "AudioPilot · 音频分组切换",
             Visible = true,
             ContextMenuStrip = _menu
         };
@@ -119,13 +119,13 @@ internal sealed class TrayApp : ApplicationContext
 
     private void ShowAlert(string message)
     {
-        _icon.ShowBalloonTip(5000, "AudioGroup", message, ToolTipIcon.Warning);
+        _icon.ShowBalloonTip(5000, "AudioPilot", message, ToolTipIcon.Warning);
     }
 
     /// <summary>首次运行或配置异常时给用户一个明确入口。</summary>
     public void ShowStartupHint(string message)
     {
-        _icon.ShowBalloonTip(6000, "AudioGroup", message, ToolTipIcon.Info);
+        _icon.ShowBalloonTip(6000, "AudioPilot", message, ToolTipIcon.Info);
     }
 
     protected override void ExitThreadCore()

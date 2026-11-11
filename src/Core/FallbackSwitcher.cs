@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using AudioGroup.Interop;
-using AudioGroup.Models;
+using AudioPilot.Interop;
+using AudioPilot.Models;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// 备用切换后端：仅当主内核 SetDefaultEndpoint 返回失败 HRESULT 时调用，默认关闭。

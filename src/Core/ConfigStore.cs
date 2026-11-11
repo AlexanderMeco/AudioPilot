@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using AudioGroup.Models;
+using AudioPilot.Models;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// profiles.json 的读写。配置文件放在 exe 同目录，便于整包拷到别的电脑。

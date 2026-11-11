@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
-using AudioGroup.Interop;
-using AudioGroup.Models;
+using AudioPilot.Interop;
+using AudioPilot.Models;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// 全局热键管理。使用 WH_KEYBOARD_LL 低级键盘钩子而不是 RegisterHotKey，

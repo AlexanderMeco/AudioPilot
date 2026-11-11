@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
-using AudioGroup.Interop;
-using AudioGroup.Models;
+using AudioPilot.Interop;
+using AudioPilot.Models;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>一个活动音频端点的快照。</summary>
 internal sealed class AudioEndpoint

@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// 开机自启：写 HKCU\Software\Microsoft\Windows\CurrentVersion\Run。
@@ -9,7 +9,7 @@ namespace AudioGroup.Core;
 internal static class AutoStart
 {
     private const string RunKeyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "AudioGroup";
+    private const string ValueName = "AudioPilot";
 
     public static bool IsEnabled()
     {

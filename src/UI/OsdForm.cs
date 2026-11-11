@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace AudioGroup.UI;
+namespace AudioPilot.UI;
 
 /// <summary>
 /// 右下角的无焦点提示条。重写 ShowWithoutActivation 并加 WS_EX_NOACTIVATE，

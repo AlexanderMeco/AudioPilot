@@ -1,8 +1,8 @@
 using System.Windows.Forms;
-using AudioGroup.Interop;
-using AudioGroup.Models;
+using AudioPilot.Interop;
+using AudioPilot.Models;
 
-namespace AudioGroup.UI;
+namespace AudioPilot.UI;
 
 /// <summary>
 /// 热键录入框：按住修饰键再敲主键即可录入，例如「右Alt + 0」。

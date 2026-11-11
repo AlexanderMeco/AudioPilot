@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace AudioGroup.Models;
+namespace AudioPilot.Models;
 
 /// <summary>
 /// 热键「主键」名称的统一转换。低级钩子拿到的是虚拟键码，

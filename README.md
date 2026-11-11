@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Assets/app-preview.png" width="88" alt="AudioGroup icon">
+  <img src="Assets/app-preview.png" width="88" alt="AudioPilot icon">
 </p>
 
-# AudioGroup
+# AudioPilot
 
 > 一个热键，同时切换 Windows 的输出与输入音频设备。
 
@@ -10,7 +10,7 @@
 ![Windows 10/11](https://img.shields.io/badge/Windows-10%2F11-0078D6)
 ![License MIT](https://img.shields.io/badge/license-MIT-green)
 
-AudioGroup 是一个常驻系统托盘的 Windows 小工具：把「输出设备 + 输入设备」打包成场景分组
+AudioPilot 是一个常驻系统托盘的 Windows 小工具：把「输出设备 + 输入设备」打包成场景分组
 （会议 / 影音 / 游戏……），按一个全局热键即可整组切换，不用再打开声音设置逐项点选。
 
 ## 为什么需要它
@@ -24,7 +24,7 @@ Windows 至今**没有公开的设置默认音频设备 API**，而且对输出�
 | `eCommunications` | 会议、语音通话 |
 
 只改其中一两个，就会出现「音乐已经从耳机播放，会议软件却还在用旧麦克风」。
-手动切换既慢又容易漏掉通信角色。AudioGroup 每次把三个角色全部设置一遍，
+手动切换既慢又容易漏掉通信角色。AudioPilot 每次把三个角色全部设置一遍，
 并在切换后回读校验，确认系统确实指向了目标设备。
 
 ## 功能特性
@@ -54,23 +54,23 @@ Windows 至今**没有公开的设置默认音频设备 API**，而且对输出�
 build.bat
 ```
 
-产物位于 `publish\AudioGroup.exe`，连同 `profiles.json` 可整个目录拷到其他电脑。
+产物位于 `publish\AudioPilot.exe`，连同 `profiles.json` 可整个目录拷到其他电脑。
 离线环境可改用依赖框架的单文件构建（目标机器需已装 .NET 8 运行时）：
 
 ```bat
-dotnet publish AudioGroup.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish
+dotnet publish AudioPilot.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish
 ```
 
 ### 使用
 
-1. 运行 `publish\AudioGroup.exe`，托盘出现蓝色图标
+1. 运行 `publish\AudioPilot.exe`，托盘出现蓝色图标
 2. 双击托盘 → **设置** → 给每个分组在下拉框选输出 / 输入设备 → **保存并生效**
 3. `右Alt + 0 / 1 / 2` 切换分组，`右Alt + 9` 循环下一组
 
 首次绑定设备前，建议先做一次只读自检：
 
 ```bat
-AudioGroup.exe --selftest
+AudioPilot.exe --selftest
 ```
 
 它不显示托盘、不安装钩子、不改动任何设备，只把活动端点清单、三个角色的当前默认值、
@@ -148,15 +148,16 @@ Windows 在通话时还会自行切换到 Hands-Free。设置窗口中的「通�
 ## 项目结构
 
 ```
-AudioGroup.csproj
+AudioPilot.csproj
 LICENSE                       MIT 许可证
 THIRD_PARTY_NOTICES.md        第三方组件与许可声明
 build.bat                     单文件发布脚本
 profiles.json                 默认空配置模板
+Assets/icon-source.png        图标源图（600x600 RGBA）
 Assets/app.ico                应用与托盘图标（内嵌，单文件发布也随包）
 Assets/app-preview.png        图标预览
-tools/make_icon.py            图标生成脚本（纯 Python 标准库，可自行改配色）
-AHK/AudioGroup.ahk            AHK v2 直调 COM 的十几行轻量版
+tools/make_icon.py            由源图生成多尺寸 ICO（纯 Python 标准库）
+AHK/AudioPilot.ahk            AHK v2 直调 COM 的十几行轻量版
 src/Interop/                  Win32 P/Invoke、Core Audio 与 IPolicyConfig COM 声明
 src/Models/                   配置模型、热键名称转换
 src/Core/                     设备枚举与匹配、切换内核、热键钩子、设备通知、编排、日志、自启
@@ -166,7 +167,7 @@ src/Program.cs                入口、单实例、只读自检、生命周期
 
 ## AHK 轻量版
 
-`AHK\AudioGroup.ahk` 直接用 `ComObject(CLSID, IID)` + `ComCall(13, ...)` 调用同一个
+`AHK\AudioPilot.ahk` 直接用 `ComObject(CLSID, IID)` + `ComCall(13, ...)` 调用同一个
 `SetDefaultEndpoint`，零外部依赖、无需编译、毫秒级。把脚本里的 `out` / `mic` 换成端点 ID 即可用，
 适合临时顶上，也适合排查「到底是程序问题还是系统问题」。需要 AutoHotkey v2.0+。
 
@@ -176,7 +177,7 @@ src/Program.cs                入口、单实例、只读自检、生命周期
 
 - 保持分层：`Interop`（COM / Win32 声明）、`Models`（配置模型）、`Core`（业务逻辑）、`UI`（界面）
 - 注释使用中文；接口声明的方法顺序必须与 Windows SDK / 上游实现一致，前 10 个占位方法不可调用
-- 提交前执行 `dotnet build -c Release` 与 `AudioGroup.exe --selftest`
+- 提交前执行 `dotnet build -c Release` 与 `AudioPilot.exe --selftest`
 - 不要提交构建产物、日志以及包含真实设备 ID 的个人配置
 
 ## 致谢
@@ -191,4 +192,4 @@ src/Program.cs                入口、单实例、只读自检、生命周期
 
 ## 许可证
 
-[MIT](LICENSE) © 2026 AudioGroup contributors
+[MIT](LICENSE) © 2026 AudioPilot contributors

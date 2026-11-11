@@ -1,7 +1,7 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-; AudioGroup 轻量版：直接调用未公开的 IPolicyConfig::SetDefaultEndpoint。
+; AudioPilot 轻量版：直接调用未公开的 IPolicyConfig::SetDefaultEndpoint。
 ; 零外部依赖、无需编译、切换在毫秒级完成。
 ; 设备 ID 可在 C# 版「设置 -> 设备清单」复制，或用 SoundVolumeView 查看。
 ; 把下面每组的 out / mic 换成实际端点 ID（形如 {0.0.0.00000000}.{guid}）即可使用。
@@ -21,14 +21,14 @@ SetDefault(id, role) => ComCall(13, PC, "Str", id, "Int", role)
 
 Apply(p) {
     if (!p.out || !p.mic) {
-        TrayTip("分组「" p.name "」还没绑定设备 ID", "AudioGroup")
+        TrayTip("分组「" p.name "」还没绑定设备 ID", "AudioPilot")
         return
     }
     for role in [0, 1, 2] {          ; eConsole / eMultimedia / eCommunications
         SetDefault(p.out, role)      ; 输出端点
         SetDefault(p.mic, role)      ; 输入端点
     }
-    TrayTip("已切换到：" p.name, "AudioGroup")
+    TrayTip("已切换到：" p.name, "AudioPilot")
 }
 
 idx := 0

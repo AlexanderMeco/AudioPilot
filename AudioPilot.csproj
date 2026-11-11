@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    AudioGroup：Windows 音频设备「分组 + 全局热键」切换工具
+    AudioPilot：Windows 音频设备「分组 + 全局热键」切换工具
     目标框架选用 net8.0-windows，界面使用 WinForms（常驻托盘，无主窗口）。
     发布参数（单文件 / self-contained）统一放在 build.bat 中，保持此处干净。
   -->
@@ -12,17 +12,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <RootNamespace>AudioGroup</RootNamespace>
-    <AssemblyName>AudioGroup</AssemblyName>
+    <RootNamespace>AudioPilot</RootNamespace>
+    <AssemblyName>AudioPilot</AssemblyName>
     <Version>1.0.0</Version>
-    <Authors>AudioGroup</Authors>
+    <Authors>AudioPilot</Authors>
     <!-- exe 自身的图标（资源管理器 / 任务栏可见） -->
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- 同一图标嵌入程序集供托盘使用；单文件发布时无需额外携带 ico 文件 -->
-    <EmbeddedResource Include="Assets\app.ico" LogicalName="AudioGroup.Assets.app.ico" />
+    <EmbeddedResource Include="Assets\app.ico" LogicalName="AudioPilot.Assets.app.ico" />
   </ItemGroup>
 
 </Project>

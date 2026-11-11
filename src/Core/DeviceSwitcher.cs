@@ -1,7 +1,7 @@
-using AudioGroup.Interop;
-using AudioGroup.Models;
+using AudioPilot.Interop;
+using AudioPilot.Models;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>一次切换的结果，Messages 里同时包含告警与错误，供界面展示并写入日志。</summary>
 internal sealed class SwitchResult

@@ -1,11 +1,11 @@
 using System.Drawing;
 using System.Text.Json;
 using System.Windows.Forms;
-using AudioGroup.Core;
-using AudioGroup.Interop;
-using AudioGroup.Models;
+using AudioPilot.Core;
+using AudioPilot.Interop;
+using AudioPilot.Models;
 
-namespace AudioGroup.UI;
+namespace AudioPilot.UI;
 
 /// <summary>
 /// 设置窗口：分组增删改、设备下拉绑定、热键录入、蓝牙通话设备覆盖、通用选项、设备清单。
@@ -68,7 +68,7 @@ internal sealed class SettingsForm : Form
         _config = DeepClone(config);
         _profiles = _config.Profiles;
 
-        Text = "AudioGroup 设置";
+        Text = "AudioPilot 设置";
         Size = new Size(780, 590);
         MinimumSize = new Size(780, 590);
         StartPosition = FormStartPosition.CenterScreen;
@@ -377,12 +377,12 @@ internal sealed class SettingsForm : Form
     {
         if (_deviceList.SelectedItems.Count == 0)
         {
-            MessageBox.Show("请先选中一行设备。", "AudioGroup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("请先选中一行设备。", "AudioPilot", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
         var id = _deviceList.SelectedItems[0].SubItems[3].Text;
         Clipboard.SetText(id);
-        MessageBox.Show("设备 ID 已复制到剪贴板。", "AudioGroup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("设备 ID 已复制到剪贴板。", "AudioPilot", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void ReloadProfileList()
@@ -475,11 +475,11 @@ internal sealed class SettingsForm : Form
         if (_list.SelectedIndex < 0) return;
         if (_profiles.Count <= 1)
         {
-            MessageBox.Show("至少需要保留一个分组。", "AudioGroup", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("至少需要保留一个分组。", "AudioPilot", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
         var name = _profiles[_list.SelectedIndex].Name;
-        if (MessageBox.Show($"确定删除分组「{name}」？", "AudioGroup",
+        if (MessageBox.Show($"确定删除分组「{name}」？", "AudioPilot",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
         int index = _list.SelectedIndex;
@@ -519,12 +519,12 @@ internal sealed class SettingsForm : Form
         {
             if (string.IsNullOrWhiteSpace(profile.Name))
             {
-                MessageBox.Show("分组名称不能为空。", "AudioGroup", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("分组名称不能为空。", "AudioPilot", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (!names.Add(profile.Name))
             {
-                MessageBox.Show($"分组名称「{profile.Name}」重复。", "AudioGroup", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"分组名称「{profile.Name}」重复。", "AudioPilot", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
         }

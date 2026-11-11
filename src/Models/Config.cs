@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AudioGroup.Models;
+namespace AudioPilot.Models;
 
 /// <summary>
 /// 热键修饰键。RightAlt / LeftAlt 由低级键盘钩子单独识别，

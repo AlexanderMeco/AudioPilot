@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace AudioGroup.Interop;
+namespace AudioPilot.Interop;
 
 /// <summary>
 /// 设置系统默认音频设备的未公开 COM 接口（Windows 至今没有公开 API）。

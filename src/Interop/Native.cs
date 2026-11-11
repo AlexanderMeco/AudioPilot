@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace AudioGroup.Interop;
+namespace AudioPilot.Interop;
 
 /// <summary>
 /// 本程序用到的 Win32 常量、结构体与 P/Invoke 声明。

@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ==========================================
-echo  Push AudioGroup to GitHub
+echo  Push AudioPilot to GitHub
 echo ==========================================
 echo.
 
@@ -12,7 +12,7 @@ if errorlevel 1 (
   echo [ERROR] No 'origin' remote is configured yet.
   echo.
   echo Send the repository URL to the assistant first, or run:
-  echo   git remote add origin https://github.com/YOUR_NAME/AudioGroup.git
+  echo   git remote add origin https://github.com/YOUR_NAME/AudioPilot.git
   goto :end
 )
 

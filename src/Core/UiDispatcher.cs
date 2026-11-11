@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// 把低级键盘钩子回调、COM 设备通知回调里的动作排队，交给 UI 线程串行执行。

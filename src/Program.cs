@@ -1,14 +1,14 @@
 using System.Windows.Forms;
-using AudioGroup.Core;
-using AudioGroup.Interop;
-using AudioGroup.Models;
-using AudioGroup.UI;
+using AudioPilot.Core;
+using AudioPilot.Interop;
+using AudioPilot.Models;
+using AudioPilot.UI;
 
-namespace AudioGroup;
+namespace AudioPilot;
 
 internal static class Program
 {
-    private const string MutexName = @"Local\AudioGroup_SingleInstance_v1";
+    private const string MutexName = @"Local\AudioPilot_SingleInstance_v1";
 
     [STAThread]
     private static int Main(string[] args)
@@ -23,7 +23,7 @@ internal static class Program
         using var mutex = new Mutex(initiallyOwned: true, MutexName, out bool createdNew);
         if (!createdNew)
         {
-            MessageBox.Show("AudioGroup 已经在运行，请查看系统托盘图标。", "AudioGroup",
+            MessageBox.Show("AudioPilot 已经在运行，请查看系统托盘图标。", "AudioPilot",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             return 1;
         }
@@ -75,7 +75,7 @@ internal static class Program
             service.Dispose();
             catalog.Dispose();
             ui.Dispose();
-            logger.Info("AudioGroup 已退出。");
+            logger.Info("AudioPilot 已退出。");
         }
 
         return 0;
@@ -84,7 +84,7 @@ internal static class Program
     /// <summary>
     /// 只读自检：验证设备枚举、当前三角色默认值、PolicyConfig 三版本 QI 是否可用。
     /// 不创建托盘、不注册设备通知、不安装全局钩子、绝不调用 SetDefaultEndpoint。
-    /// 命令行用法：AudioGroup.exe --selftest，结果在 exe 同目录的 selftest.txt。
+    /// 命令行用法：AudioPilot.exe --selftest，结果在 exe 同目录的 selftest.txt。
     /// </summary>
     private static int RunSelfTest()
     {

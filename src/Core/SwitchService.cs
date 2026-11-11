@@ -1,7 +1,7 @@
-using AudioGroup.Models;
-using AudioGroup.UI;
+using AudioPilot.Models;
+using AudioPilot.UI;
 
-namespace AudioGroup.Core;
+namespace AudioPilot.Core;
 
 /// <summary>
 /// 切换流程的编排层：调用主内核、记录当前分组、发反馈、处理设备变化后的自动重应用。
@@ -63,7 +63,7 @@ internal sealed class SwitchService : IDisposable
     {
         _catalog.RegisterNotifications(_notifier);
         ApplyAutoStart();
-        _logger.Info("AudioGroup 已启动。");
+        _logger.Info("AudioPilot 已启动。");
     }
 
     /// <summary>应用一个分组。silent = true 用于后台自动重应用，不弹提示、不响提示音。</summary>

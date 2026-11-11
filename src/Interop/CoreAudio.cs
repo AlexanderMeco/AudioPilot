@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace AudioGroup.Interop;
+namespace AudioPilot.Interop;
 
 /// <summary>数据流方向：0 = 播放输出(Render)，1 = 录音输入(Capture)。</summary>
 internal enum EDataFlow
