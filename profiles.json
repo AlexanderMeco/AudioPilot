@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "autoStart": false,
+  "playSound": true,
+  "showOsd": true,
+  "reapplyOnDeviceChange": true,
+  "reapplyDebounceMs": 2000,
+  "activeProfileName": null,
+  "cycleHotkey": {
+    "modifiers": "RightAlt",
+    "key": "9"
+  },
+  "fallback": {
+    "enabled": false,
+    "kind": "soundvolumeview",
+    "soundVolumeViewPath": "",
+    "powerShellPath": "powershell.exe"
+  },
+  "profiles": [
+    {
+      "name": "会议",
+      "hotkey": { "modifiers": "RightAlt", "key": "0" },
+      "output": { "id": "", "name": "" },
+      "input": { "id": "", "name": "" },
+      "outputComm": { "id": "", "name": "" },
+      "inputComm": { "id": "", "name": "" }
+    },
+    {
+      "name": "影音",
+      "hotkey": { "modifiers": "RightAlt", "key": "1" },
+      "output": { "id": "", "name": "" },
+      "input": { "id": "", "name": "" },
+      "outputComm": { "id": "", "name": "" },
+      "inputComm": { "id": "", "name": "" }
+    },
+    {
+      "name": "游戏",
+      "hotkey": { "modifiers": "RightAlt", "key": "2" },
+      "output": { "id": "", "name": "" },
+      "input": { "id": "", "name": "" },
+      "outputComm": { "id": "", "name": "" },
+      "inputComm": { "id": "", "name": "" }
+    }
+  ]
+}

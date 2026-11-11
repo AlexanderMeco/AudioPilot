@@ -1,0 +1,26 @@
+# ---------------------------------------------------------------------------
+# 构建产物：均可由 build.bat / dotnet publish 重新生成，不进版本库
+# ---------------------------------------------------------------------------
+bin/
+obj/
+publish/
+
+# 运行期产物
+logs/
+*.log
+selftest.txt
+*.pdb
+*.old.exe
+
+# 用户实际配置在 publish/profiles.json（含设备 ID，已随 publish/ 一起忽略）。
+# 根目录的 profiles.json 是默认空模板，需要提交，请勿在此忽略它。
+
+# IDE / 操作系统
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+Desktop.ini
+.DS_Store
