@@ -73,6 +73,19 @@ Windows 在通话时还会自行切换到 Hands-Free。设置窗口中的「通�
 - Windows 有时会在插入设备时自行改默认设备；本程序会在防抖后把当前分组拉回来。
 - 日志位于 `logs\yyyy-MM-dd.log`，包含命中的 COM 接口名、6 次角色调用结果与回读校验结果。
 
+## Git 仓库与推送
+
+本地仓库分支为 `main`。`.gitignore` 忽略 `bin/`、`obj/`、`publish/`、`logs/`、`*.log`、
+`selftest.txt`、`*.pdb` —— 构建产物和**包含真实设备 ID 的用户配置**都不进版本库；
+克隆后运行 `build.bat` 即可重新生成 exe，根目录的 `profiles.json` 是默认空模板（会被提交）。
+
+推送到 GitHub：在网页建好**空的**私有仓库（不要勾选 README / .gitignore / License），
+把仓库地址配成 `origin`，然后双击 `push.bat`；首次会弹出一次 GitHub 登录窗口，完成即可。
+
+```
+git remote add origin https://github.com/<你的用户名>/AudioGroup.git
+```
+
 ## 工程结构
 
 ```
