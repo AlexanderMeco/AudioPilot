@@ -344,6 +344,17 @@ internal sealed class SettingsForm : Form
 
     private void FillDeviceList(List<AudioEndpoint> render, List<AudioEndpoint> capture)
     {
+        // 先一次性读出 6 组「方向 + 角色」的默认设备，再逐台设备比对。
+        // 否则每台设备都要回读 3 次 COM，设备多时打开这个页面会明显变慢。
+        var defaults = new Dictionary<(bool Render, ERole Role), string?>();
+        foreach (var isRender in new[] { true, false })
+        {
+            foreach (var role in new[] { ERole.eConsole, ERole.eMultimedia, ERole.eCommunications })
+            {
+                defaults[(isRender, role)] = _catalog.GetDefaultId(isRender, role);
+            }
+        }
+
         _deviceList.BeginUpdate();
         _deviceList.Items.Clear();
         foreach (var device in render.Concat(capture))
@@ -351,7 +362,7 @@ internal sealed class SettingsForm : Form
             var roles = new List<string>();
             foreach (var role in new[] { ERole.eConsole, ERole.eMultimedia, ERole.eCommunications })
             {
-                var current = _catalog.GetDefaultId(device.IsRender, role);
+                var current = defaults[(device.IsRender, role)];
                 if (string.Equals(current, device.Id, StringComparison.OrdinalIgnoreCase))
                 {
                     roles.Add(role switch

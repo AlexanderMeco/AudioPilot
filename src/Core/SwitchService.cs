@@ -4,24 +4,25 @@ using AudioPilot.UI;
 namespace AudioPilot.Core;
 
 /// <summary>
-/// 切换流程的编排层：调用主内核、记录当前分组、发反馈、处理设备变化后的自动重应用。
-/// 所有对外方法都在 UI 线程执行（由 UiDispatcher 保证）。
+/// 切换流程的编排层：把耗时的 COM 切换投递到 SwitchWorker（独立 STA 线程），
+/// 结果回到 UI 线程后再做界面反馈、配置保存与事件通知。
+/// 所有对外方法仍在 UI 线程调用，界面代码不需要关心线程细节。
 /// </summary>
 internal sealed class SwitchService : IDisposable
 {
     private const int SelfApplySuppressionMs = 3000;
 
     private readonly ConfigStore _store;
-    private readonly DeviceCatalog _catalog;
-    private readonly DeviceSwitcher _switcher;
+    private readonly DeviceCatalog _catalog;  // UI 线程：设置窗口枚举 + 设备通知注册
+    private readonly SwitchWorker _worker;    // 工作线程：设备目录缓存 + 切换内核
     private readonly Feedback _feedback;
     private readonly Logger _logger;
     private readonly UiDispatcher _ui;
     private readonly DeviceNotifier _notifier;
     private readonly System.Windows.Forms.Timer _reapplyTimer;
 
-    private AppConfig _config;
-    private DateTime _lastSelfApplyUtc = DateTime.MinValue;
+    private volatile AppConfig _config;
+    private long _lastSelfApplyTicks;
 
     /// <summary>当前分组或配置变化，托盘据此刷新菜单。</summary>
     public event Action? StateChanged;
@@ -35,7 +36,7 @@ internal sealed class SwitchService : IDisposable
         AppConfig config,
         ConfigStore store,
         DeviceCatalog catalog,
-        DeviceSwitcher switcher,
+        SwitchWorker worker,
         Feedback feedback,
         Logger logger,
         UiDispatcher ui)
@@ -43,7 +44,7 @@ internal sealed class SwitchService : IDisposable
         _config = config;
         _store = store;
         _catalog = catalog;
-        _switcher = switcher;
+        _worker = worker;
         _feedback = feedback;
         _logger = logger;
         _ui = ui;
@@ -55,8 +56,13 @@ internal sealed class SwitchService : IDisposable
             DoReapply();
         };
 
-        // COM 回调可能来自任意线程，先投递到 UI 线程再做防抖。
-        _notifier = new DeviceNotifier(() => _ui.Post(ScheduleReapply));
+        // COM 回调可能来自任意线程：先回 UI 线程，再让两份设备目录缓存一起失效。
+        _notifier = new DeviceNotifier(() => _ui.Post(() =>
+        {
+            _catalog.InvalidateCache();
+            _worker.InvalidateCache();
+            ScheduleReapply();
+        }));
     }
 
     public void Start()
@@ -66,14 +72,38 @@ internal sealed class SwitchService : IDisposable
         _logger.Info("AudioPilot 已启动。");
     }
 
-    /// <summary>应用一个分组。silent = true 用于后台自动重应用，不弹提示、不响提示音。</summary>
+    /// <summary>
+    /// 应用一个分组。切换本体在工作线程执行，避免阻塞 UI 线程的消息泵 ——
+    /// 低级键盘钩子的回调同样依赖这个消息泵，被长时间占用会被系统摘钩。
+    /// silent = true 用于后台自动重应用，不弹提示、不响提示音。
+    /// </summary>
     public void ApplyProfile(Profile profile, bool silent = false)
+    {
+        var configSnapshot = _config;
+        _worker.Post((_, switcher) =>
+        {
+            SwitchResult result;
+            try
+            {
+                result = switcher.Apply(profile, configSnapshot);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"切换分组「{profile.Name}」时发生异常：{ex}");
+                result = new SwitchResult { Success = false };
+                result.Messages.Add(ex.Message);
+            }
+
+            Interlocked.Exchange(ref _lastSelfApplyTicks, DateTime.UtcNow.Ticks);
+            _ui.Post(() => FinishApply(profile, result, silent));
+        });
+    }
+
+    /// <summary>切换结果回到 UI 线程后：更新状态、发反馈、保存配置、通知托盘刷新。</summary>
+    private void FinishApply(Profile profile, SwitchResult result, bool silent)
     {
         try
         {
-            var result = _switcher.Apply(profile, _config);
-            _lastSelfApplyUtc = DateTime.UtcNow;
-
             if (result.Success)
             {
                 _config.ActiveProfileName = profile.Name;
@@ -96,9 +126,7 @@ internal sealed class SwitchService : IDisposable
         }
         catch (Exception ex)
         {
-            _logger.Error($"切换分组「{profile.Name}」时发生异常：{ex}");
-            _feedback.Warning("切换异常，详见日志");
-            Alert?.Invoke($"切换异常：{ex.Message}");
+            _logger.Error($"更新切换结果时发生异常：{ex}");
         }
         finally
         {
@@ -156,13 +184,15 @@ internal sealed class SwitchService : IDisposable
     }
 
     /// <summary>
-    /// 设备插拔 / 默认设备被 Windows 改动时触发，做防抖后重新应用当前分组。
+    /// 设备插拔 / 默认设备被 Windows 改动时触发，防抖后重新应用当前分组。
     /// 抑制窗口用于忽略「我们自己切换」引起的 OnDefaultDeviceChanged，避免无限循环。
     /// </summary>
     private void ScheduleReapply()
     {
         if (!_config.ReapplyOnDeviceChange) return;
-        if ((DateTime.UtcNow - _lastSelfApplyUtc).TotalMilliseconds < SelfApplySuppressionMs) return;
+
+        var last = new DateTime(Interlocked.Read(ref _lastSelfApplyTicks), DateTimeKind.Utc);
+        if ((DateTime.UtcNow - last).TotalMilliseconds < SelfApplySuppressionMs) return;
         if (string.IsNullOrEmpty(_config.ActiveProfileName)) return;
 
         _reapplyTimer.Interval = Math.Clamp(_config.ReapplyDebounceMs, 500, 30000);

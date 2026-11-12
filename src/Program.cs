@@ -40,12 +40,13 @@ internal static class Program
         var ui = new UiDispatcher(logger);
         var catalog = new DeviceCatalog(logger);
         var fallback = new FallbackSwitcher(logger);
-        var switcher = new DeviceSwitcher(catalog, fallback, logger);
+        // 切换内核跑在独立 STA 线程；UI 线程的 catalog 只服务设置窗口与设备通知。
+        var worker = new SwitchWorker(logger, fallback);
 
         // Feedback 需要读取「当前」配置，用闭包延迟到 service 创建之后。
         SwitchService? service = null;
         var feedback = new Feedback(() => service!.Config, appDirectory);
-        service = new SwitchService(config, store, catalog, switcher, feedback, logger, ui);
+        service = new SwitchService(config, store, catalog, worker, feedback, logger, ui);
 
         var hotkeys = new HotkeyManager(ui, logger, (profile, isCycle) =>
         {
@@ -73,6 +74,7 @@ internal static class Program
             // 顺序：先摘钩子、再停服务、最后释放 COM 通知与 UI 队列。
             hotkeys.Dispose();
             service.Dispose();
+            worker.Dispose();
             catalog.Dispose();
             ui.Dispose();
             logger.Info("AudioPilot 已退出。");

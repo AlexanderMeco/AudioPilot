@@ -29,6 +29,11 @@ internal sealed class DeviceCatalog : IDisposable
 
     private readonly Logger _logger;
     private readonly IMMDeviceEnumerator _enumerator;
+    private readonly object _cacheLock = new();
+
+    // 按方向缓存活动端点；设备变化通知到达后由 InvalidateCache 清空。
+    private List<AudioEndpoint>? _renderCache;
+    private List<AudioEndpoint>? _captureCache;
 
     // 必须长期持有引用，否则 COM 回调对象的 CCW 会被 GC 回收。
     private IMMNotificationClient? _registeredClient;
@@ -40,8 +45,35 @@ internal sealed class DeviceCatalog : IDisposable
         _enumerator = (IMMDeviceEnumerator)new MMDeviceEnumeratorComObject();
     }
 
-    /// <summary>列出当前处于 Active 状态的输出或输入端点。</summary>
+    /// <summary>
+    /// 列出活动端点。同类请求复用缓存，避免一次切换里重复枚举十几次 COM 集合；
+    /// 设备变化通知到达后缓存失效，下一次读取的一定是真实状态。
+    /// </summary>
     public IReadOnlyList<AudioEndpoint> ListActive(bool render)
+    {
+        lock (_cacheLock)
+        {
+            var cached = render ? _renderCache : _captureCache;
+            if (cached is not null) return cached;
+
+            var fresh = EnumerateActive(render);
+            if (render) _renderCache = fresh;
+            else _captureCache = fresh;
+            return fresh;
+        }
+    }
+
+    /// <summary>设备插拔 / 默认设备变化后调用，让两个方向的缓存都失效。</summary>
+    public void InvalidateCache()
+    {
+        lock (_cacheLock)
+        {
+            _renderCache = null;
+            _captureCache = null;
+        }
+    }
+
+    private List<AudioEndpoint> EnumerateActive(bool render)
     {
         var result = new List<AudioEndpoint>();
         var flow = render ? EDataFlow.eRender : EDataFlow.eCapture;
